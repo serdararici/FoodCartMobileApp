@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_cart_app/colors.dart';
 import 'package:food_cart_app/data/entity/foods.dart';
+import 'package:food_cart_app/ui/cubit/mainpage_cubit.dart';
 import 'package:food_cart_app/ui/views/cart.dart';
+import 'package:food_cart_app/ui/views/likes.dart';
+import 'package:food_cart_app/ui/views/product_details.dart';
+import 'package:food_cart_app/ui/views/profile.dart';
 
 class Mainpage extends StatefulWidget {
   const Mainpage({super.key});
@@ -10,15 +16,11 @@ class Mainpage extends StatefulWidget {
 }
 
 class _MainpageState extends State<Mainpage> {
-  Future<List<Foods>> getFoods() async {
-    var foodList = <Foods>[];
-    var f1 = Foods(food_id: 1, food_name: "Ayran", food_image: "ayran", food_price: 15);
-    var f2 = Foods(food_id: 2, food_name: "Döner", food_image: "doner", food_price: 200);
-    var f3 = Foods(food_id: 3, food_name: "Lahmacun", food_image: "lahmacun", food_price: 85);
-    foodList.add(f1);
-    foodList.add(f2);
-    foodList.add(f3);
-    return foodList;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<MainpageCubit>().getFoods();
   }
 
   @override
@@ -29,13 +31,24 @@ class _MainpageState extends State<Mainpage> {
           "Yemek Sepeti",
           style: TextStyle(color: Colors.white, fontFamily: "Pacifico", fontSize: 22),
         ),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: mainColor,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.favorite, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Likes()),
+              );
+            },
+          ),
+        ],
       ),
-      body: FutureBuilder<List<Foods>>(
-        future: getFoods(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var foodList = snapshot.data!;
+      body: BlocBuilder<MainpageCubit,List<Foods>>(
+        //future: getFoods(),
+        builder: (context, foodList) {
+          if (foodList.isNotEmpty) {
+            //var foodList = foodList.data!;
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -45,75 +58,117 @@ class _MainpageState extends State<Mainpage> {
               itemCount: foodList.length,
               itemBuilder: (context, index) {
                 var food = foodList[index];
-                return Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.asset('assets/images/${food.food_image}.png', height: 100, fit: BoxFit.cover),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          food.food_name,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '₺${food.food_price}',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                      ),
-                      Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
+                return GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProductDetails(food: food)));
+                  },
+                  child: Card(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset('assets/images/${food.food_image}.png', height: 100, fit: BoxFit.cover),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                food.food_name,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ),
-                          onPressed: () {
-                            // Sepete ekleme işlemi burada olacak
-                          },
-                          child: Icon(Icons.add, color: Colors.redAccent),
                         ),
-                      ),
-                    ],
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  '${food.food_price} ₺',
+                                  style: TextStyle(color: mainColor,fontWeight: FontWeight.bold,fontSize: 20),
+                                ),
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  shape: CircleBorder(),
+                                ),
+                                onPressed: () {
+                                  // Sepete ekleme işlemi burada olacak
+                                },
+                                child: Icon(Icons.add, color: mainColor),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 );
               },
             );
-          } else if (snapshot.hasError) {
+          } /*else if (foodList.hasError) {
             return Center(child: Text('Bir hata oluştu.'));
-          } else {
+          }*/ else {
             return Center(child: CircularProgressIndicator());
           }
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Sepet sayfasına gitme işlemi burada olacak
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Cart()),
+          );
         },
-        backgroundColor: Colors.redAccent,
-        child: Icon(Icons.shopping_cart,color: Colors.white,),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0),),
+        backgroundColor: mainColor,
+        child: Icon(Icons.shopping_cart, color: Colors.white),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
       ),
-
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         notchMargin: 8.0,
-        child: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Anasayfa'),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Beğeniler'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+        color: Colors.white,
+        elevation: 9.8,
+        shadowColor: Colors.black,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start, // Butonları sola hizala
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.home),
+              color: mainColor,
+              onPressed: () {
+                // Anasayfa işlemi burada olacak
+              },
+            ),
+            SizedBox(width: 64), // Butonlar arasında boşluk bırakma
+            IconButton(
+              icon: Icon(Icons.favorite,color: Colors.grey,),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Likes()),
+                );
+              },
+            ),
+            SizedBox(width: 64), // Butonlar arasında boşluk bırakma
+            IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Profile()), // Profil sayfası ekleyin
+                );
+              },
+            ),
           ],
-          selectedItemColor: Colors.redAccent,
         ),
       ),
+
     );
   }
 }
