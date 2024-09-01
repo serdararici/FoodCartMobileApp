@@ -43,12 +43,25 @@ class FoodsDaoRepository {
     }
   }
 
+  Future<List<Foods>> searchFood(String searchingWord) async {
+    var url = "http://kasimadalan.pe.hu/yemekler/tumYemekleriGetir.php";
+    var result = await Dio().get(url);
+    return parseFoods(result.data.toString());
+
+  }
+
   Future<void> deleteFoodsFromCart(int cartFoodId, String userName) async {
     var url = "http://kasimadalan.pe.hu/yemekler/sepettenYemekSil.php";
     var data = {"sepet_yemek_id":cartFoodId, "kullanici_adi": userName };
     var result = await Dio().post(url,data: FormData.fromMap(data));
     print("Removed from cart: ${result.data.toString()}");
 
+  }
+
+  Future<void> clearCart(List<CartFoods> foodList, String userName) async {
+    for (var food in foodList) {
+      await deleteFoodsFromCart(food.food_cart_id, userName);
+    }
   }
 
 

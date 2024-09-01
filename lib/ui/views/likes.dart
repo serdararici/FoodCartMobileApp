@@ -21,6 +21,9 @@ class Likes extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontFamily: "Pacifico", fontSize: 22),
         ),
         backgroundColor: mainColor,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
       ),
       body: favoriteFoods.isEmpty
           ? Center(child: Text('Favori yemekleriniz bulunmuyor.'))

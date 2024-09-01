@@ -18,5 +18,20 @@ class CartCubit extends Cubit<List<CartFoods>>{
     await getFoodsFromCart(userName);
   }
 
+  Future<void> clearCart(String userName) async {
+    await frepo.clearCart(state, userName);
+    emit([]); // Sepet temizlendi, durumu boş olarak ayarlıyoruz.
+  }
+
+  int calculateTotalPrice(List<CartFoods> foodList) {
+    int total = 0;
+    for (var food in foodList) {
+      var price = food.food_price; // food_price'ı int'e çevir
+      var quantity = food.food_quantity; // food_quantity'ı int'e çevir
+      total += price * quantity; // Toplam fiyatı hesapla
+    }
+    return total;
+  }
+
 
 }

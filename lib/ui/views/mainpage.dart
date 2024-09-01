@@ -59,6 +59,33 @@ class _MainpageState extends State<Mainpage> {
       ),
       body: Column(
         children: [
+          // SearchView için eklenen Container
+          Container(
+            margin: const EdgeInsets.all(8.0), // Kenarlardan boşluk bırakmak için
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0), // Yuvarlak köşeler
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3), // gölge yerleşimi
+                ),
+              ],
+            ),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: "Ara...",
+                border: InputBorder.none,
+                icon: Icon(Icons.search, color: mainColor),
+              ),
+              onChanged: (value) {
+                // Arama işlevini burada yapabilirsiniz
+              },
+            ),
+          ),
           Expanded(
             child: BlocBuilder<MainpageCubit, List<Foods>>(
               builder: (context, foodList) {
@@ -218,6 +245,21 @@ class FoodCard extends StatelessWidget {
                       onPressed: () {
                         // Sepete ekleme işlemi burada olacak
 
+                        // Sepete ekleme İşlemi
+                        context.read<MainpageCubit>()
+                            .addFoods(food.food_name,
+                          food.food_image,
+                          food.food_price,
+                          1,
+                          "serdar",);
+                        //sepete ekleme bildirimi göstermek için
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Ürün sepete eklendi: ${food.food_name}'),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.green, // İsteğe bağlı, renk ayarı
+                          ),
+                        );
                       },
                       child: Icon(Icons.add, color: mainColor),
                     ),
