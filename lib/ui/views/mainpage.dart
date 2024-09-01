@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_cart_app/colors.dart';
@@ -83,6 +85,7 @@ class _MainpageState extends State<Mainpage> {
               ),
               onChanged: (value) {
                 // Arama işlevini burada yapabilirsiniz
+                context.read<MainpageCubit>().searchFoods(value);
               },
             ),
           ),
@@ -150,7 +153,7 @@ class _MainpageState extends State<Mainpage> {
         elevation: 9.8,
         shadowColor: Colors.black,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start, // Butonları sola hizala
+          mainAxisAlignment: MainAxisAlignment.center, // Butonları sola hizala
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.home),
@@ -209,10 +212,10 @@ class FoodCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Image.network(
-                "http://kasimadalan.pe.hu/yemekler/resimler/${food.food_image}",
-                height: 100,
-                fit: BoxFit.cover,
-              ),
+                  "http://kasimadalan.pe.hu/yemekler/resimler/${food.food_image}",
+                  //height: 100,
+                  fit: BoxFit.cover,
+                ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: Row(
@@ -282,5 +285,6 @@ class FoodCard extends StatelessWidget {
         ],
       ),
     );
+
   }
 }

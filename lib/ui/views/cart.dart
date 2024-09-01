@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_cart_app/colors.dart';
 import 'package:food_cart_app/data/entity/cart_foods.dart';
 import 'package:food_cart_app/ui/cubit/cart_cubit.dart';
+import 'package:lottie/lottie.dart';
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -37,7 +38,18 @@ class _CartState extends State<Cart> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Sipariş Onaylandı"),
-          content: Text("Siparişiniz başarıyla alındı."),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Lottie.network("https://lottie.host/3cc2d24a-43e6-401c-ba2b-c60d10b3d7e5/CiD6Lbt1wu.json", // Lottie animasyon dosyanızın yolu
+                width: 100,
+                height: 100,
+                fit: BoxFit.fill,
+              ),
+              SizedBox(height: 20),
+              Text("Siparişiniz başarıyla alındı."),
+            ],
+          ),
           actions: [
             TextButton(
               child: Text("Tamam"),

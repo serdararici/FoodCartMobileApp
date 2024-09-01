@@ -12,6 +12,11 @@ class MainpageCubit extends Cubit<List<Foods>>{
     emit(list);
   }
 
+  Future<void> searchFoods(String searchingWord) async {
+    var list = await frepo.searchFoods(searchingWord);
+    emit(list);
+  }
+
   Future<void> addFoods(String foodName, String foodImage, int foodPrice, int foodNumbers, String userName) async {
     await frepo.addFoods(foodName, foodImage, foodPrice, foodNumbers, userName);
   }

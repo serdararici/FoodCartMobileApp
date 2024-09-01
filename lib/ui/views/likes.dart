@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_cart_app/colors.dart';
 import 'package:food_cart_app/data/entity/foods.dart';
 
-class Likes extends StatelessWidget {
+class Likes extends StatefulWidget {
   final List<Foods> favoriteFoods;
   final void Function(Foods food) onRemoveFromFavorites;
 
@@ -13,26 +13,40 @@ class Likes extends StatelessWidget {
   });
 
   @override
+  _LikesState createState() => _LikesState();
+}
+
+class _LikesState extends State<Likes> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           "Beğeniler",
-          style: TextStyle(color: Colors.white, fontFamily: "Pacifico", fontSize: 22),
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: "Pacifico",
+            fontSize: 22,
+          ),
         ),
         backgroundColor: mainColor,
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
       ),
-      body: favoriteFoods.isEmpty
-          ? Center(child: Text('Favori yemekleriniz bulunmuyor.'))
+      body: widget.favoriteFoods.isEmpty
+          ? const Center(child: Text('Favori yemekleriniz bulunmuyor.'))
           : ListView.builder(
-        itemCount: favoriteFoods.length,
+        itemCount: widget.favoriteFoods.length,
         itemBuilder: (context, index) {
-          var food = favoriteFoods[index];
+          var food = widget.favoriteFoods[index];
+          bool isFavorite = true;
+
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 16.0,
+            ),
             child: Card(
               elevation: 4.0,
               child: Row(
@@ -58,12 +72,19 @@ class Likes extends StatelessWidget {
                           // Yemek adı
                           Text(
                             food.food_name,
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                           // Fiyat
                           Text(
                             '${food.food_price} ₺',
-                            style: TextStyle(color: mainColor, fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(
+                              color: mainColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                         ],
                       ),
@@ -72,11 +93,14 @@ class Likes extends StatelessWidget {
                   // Kalp simgesi
                   IconButton(
                     icon: Icon(
-                      Icons.favorite,
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
                       color: Colors.red,
                     ),
                     onPressed: () {
-                      onRemoveFromFavorites(food);
+                      setState(() {
+                        isFavorite = !isFavorite; // Butona basıldığında favori durumu değişir
+                      });
+                      widget.onRemoveFromFavorites(food);
                     },
                   ),
                 ],
